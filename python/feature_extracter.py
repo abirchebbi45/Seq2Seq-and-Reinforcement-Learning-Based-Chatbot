@@ -61,3 +61,20 @@ sum_a = 0.
 sum_b = 0.
 len_a_list = []
 len_b_list = []
+for i in range(len(conversations)):
+    len_a = len(conversations[i][0])
+    len_b = len(conversations[i][1].split())
+    if len_a > max_a:
+        max_a = len_a
+        max_a_ind = i
+    if len_b > max_b:
+        max_b = len_b
+        max_b_ind = i
+    sum_a += len_a
+    sum_b += len_b
+    len_a_list.append(len_a)
+    len_b_list.append(len_b)
+np.save("data/reversed_lenmax22_a_list", np.array(len_a_list))
+np.save("data/reversed_lenmax22_b_list", np.array(len_b_list))
+print("max_a_ind {}, max_b_ind {}".format(max_a_ind, max_b_ind))
+print("max_a {}, max_b {}, avg_a {}, avg_b {}".format(max_a, max_b, sum_a/len(conversations), sum_b/len(conversations)))
