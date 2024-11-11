@@ -51,3 +51,13 @@ for conversation in raw_movie_conversations:
         print('con_count {}, traindata_count {}'.format(con_count, traindata_count))
 pickle.dump(conversations, open('data/reversed_conversations_lenmax22', 'wb'), True)
 print("Time Elapsed: {} secs\n".format(time.time() - ts))
+
+# some statistics of training data
+max_a = -1
+max_b = -1
+max_a_ind = -1
+max_b_ind = -1
+sum_a = 0.
+sum_b = 0.
+len_a_list = []
+len_b_list = []
