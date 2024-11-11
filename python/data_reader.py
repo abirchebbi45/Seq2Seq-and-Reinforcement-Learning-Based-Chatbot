@@ -30,3 +30,9 @@ class Data_Reader:
             self.train_index += batch_size
 
         return batch_index
+    def generate_training_batch(self, batch_size):
+        batch_index = self.generate_batch_index(batch_size)
+        batch_X = [self.training_data[i][0] for i in batch_index]   # batch_size of conv_a
+        batch_Y = [self.training_data[i][1] for i in batch_index]   # batch_size of conv_b
+
+        return batch_X, batch_Y
