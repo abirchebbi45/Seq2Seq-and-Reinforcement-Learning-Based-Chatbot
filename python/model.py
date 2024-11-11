@@ -91,3 +91,55 @@ class Seq2Seq_chatbot():
         }
 
         return train_op, loss, word_vectors, caption, caption_mask, inter_value
+    
+    def build_generator(self):
+        word_vectors = tf.placeholder(tf.float32, [1, self.n_encode_lstm_step, self.dim_wordvec])
+
+        word_vectors_flat = tf.reshape(word_vectors, [-1, self.dim_wordvec])
+        wordvec_emb = tf.nn.xw_plus_b(word_vectors_flat, self.encode_vector_W, self.encode_vector_b)
+        wordvec_emb = tf.reshape(wordvec_emb, [1, self.n_encode_lstm_step, self.dim_hidden])
+
+        state1 = tf.zeros([1, self.lstm1.state_size])
+        state2 = tf.zeros([1, self.lstm2.state_size])
+        padding = tf.zeros([1, self.dim_hidden])
+
+        generated_words = []
+
+        probs = []
+        embeds = []
+
+        for i in range(0, self.n_encode_lstm_step):
+            if i > 0:
+                tf.get_variable_scope().reuse_variables()
+
+            with tf.variable_scope("LSTM1"):
+                output1, state1 = self.lstm1(wordvec_emb[:, i, :], state1)
+
+            with tf.variable_scope("LSTM2"):
+                output2, state2 = self.lstm2(tf.concat([padding, output1], 1), state2)
+
+        for i in range(0, self.n_decode_lstm_step):
+            tf.get_variable_scope().reuse_variables()
+
+            if i == 0:
+                with tf.device('/cpu:0'):
+                    current_embed = tf.nn.embedding_lookup(self.Wemb, tf.ones([1], dtype=tf.int64))
+
+            with tf.variable_scope("LSTM1"):
+                output1, state1 = self.lstm1(padding, state1)
+
+            with tf.variable_scope("LSTM2"):
+                output2, state2 = self.lstm2(tf.concat([current_embed, output1], 1), state2)
+
+            logit_words = tf.nn.xw_plus_b(output2, self.embed_word_W, self.embed_word_b)
+            max_prob_index = tf.argmax(logit_words, 1)[0]
+            generated_words.append(max_prob_index)
+            probs.append(logit_words)
+
+            with tf.device("/cpu:0"):
+                current_embed = tf.nn.embedding_lookup(self.Wemb, max_prob_index)
+                current_embed = tf.expand_dims(current_embed, 0)
+
+            embeds.append(current_embed)
+
+        return word_vectors, generated_words, probs, embeds
