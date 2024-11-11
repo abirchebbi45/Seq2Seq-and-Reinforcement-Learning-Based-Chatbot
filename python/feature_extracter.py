@@ -142,3 +142,30 @@ for conversation in raw_movie_conversations:
         print('con_count {}, traindata_count {}'.format(con_count, traindata_count))
 pickle.dump(conversations, open('data/conversations_lenmax22_former_sents2', 'wb'), True)
 print("Time Elapsed: {} secs\n".format(time.time() - ts))
+
+
+ts = time.time()
+conversations = []
+print('len conversation', len(raw_movie_conversations))
+con_count = 0
+traindata_count = 0
+for conversation in raw_movie_conversations:
+    conversation = conversation.split(' +++$+++ ')[-1]
+    conversation = conversation.replace('[', '')
+    conversation = conversation.replace(']', '')
+    conversation = conversation.replace('\'', '')
+    conversation = conversation.split(', ')
+    assert len(conversation) > 1
+    for i in range(len(conversation)-1):
+        con_a = utterance_dict[conversation[i]]
+        con_b = utterance_dict[conversation[i+1]]
+        if len(con_a.split()) <= 22 and len(con_b.split()) <= 22:
+            con_a = [refine(w) for w in con_a.lower().split()]
+            # con_a = [word_vector[w] if w in word_vector else np.zeros(WORD_VECTOR_SIZE) for w in con_a]
+            conversations.append((con_a, con_b))
+            traindata_count += 1
+    con_count += 1
+    if con_count % 1000 == 0:
+        print('con_count {}, traindata_count {}'.format(con_count, traindata_count))
+pickle.dump(conversations, open('data/conversations_lenmax22', 'wb'), True)
+print("Time Elapsed: {} secs\n".format(time.time() - ts))
