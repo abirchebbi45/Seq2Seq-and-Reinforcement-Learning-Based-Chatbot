@@ -62,3 +62,11 @@ def preProBuildWordVocab(word_count_threshold=5, all_words_path=config.all_words
     bias_init_vector -= np.max(bias_init_vector) # shift to nice numeric range
 
     return wordtoix, ixtoword, bias_init_vector
+def parse_all_words(all_words_path):
+    raw_movie_lines = open('data/movie_lines.txt', 'r', encoding='utf-8', errors='ignore').read().split('\n')[:-1]
+
+    with codecs.open(all_words_path, "w", encoding='utf-8', errors='ignore') as f:
+        for line in raw_movie_lines:
+            line = line.split(' +++$+++ ')
+            utterance = line[-1]
+            f.write(utterance + '\n')
