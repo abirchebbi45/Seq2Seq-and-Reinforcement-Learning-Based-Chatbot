@@ -36,3 +36,10 @@ class Data_Reader:
         batch_Y = [self.training_data[i][1] for i in batch_index]   # batch_size of conv_b
 
         return batch_X, batch_Y
+    def generate_training_batch_with_former(self, batch_size):
+        batch_index = self.generate_batch_index(batch_size)
+        batch_X = [self.training_data[i][0] for i in batch_index]   # batch_size of conv_a
+        batch_Y = [self.training_data[i][1] for i in batch_index]   # batch_size of conv_b
+        former = [self.training_data[i][2] for i in batch_index]    # batch_size of former utterance
+
+        return batch_X, batch_Y, former
