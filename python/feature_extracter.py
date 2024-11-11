@@ -26,6 +26,7 @@ def refine(data):
     data = ' '.join(words)
     return data
 
+
 ts = time.time()
 conversations = []
 print('len conversation', len(raw_movie_conversations))
