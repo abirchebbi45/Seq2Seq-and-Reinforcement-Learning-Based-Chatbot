@@ -12,3 +12,5 @@ class Data_Reader:
         else:    
             self.shuffle_list = self.shuffle_index()
         self.train_index = cur_train_index
+    def get_batch_num(self, batch_size):
+        return self.data_size // batch_size
