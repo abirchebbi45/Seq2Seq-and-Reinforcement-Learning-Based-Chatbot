@@ -70,3 +70,11 @@ def parse_all_words(all_words_path):
             line = line.split(' +++$+++ ')
             utterance = line[-1]
             f.write(utterance + '\n')
+
+""" Extract only the vocabulary part of the data """
+def refine(data):
+    words = re.findall("[a-zA-Z'-]+", data)
+    words = ["".join(word.split("'")) for word in words]
+    # words = ["".join(word.split("-")) for word in words]
+    data = ' '.join(words)
+    return data
