@@ -18,3 +18,15 @@ class Data_Reader:
         shuffle_index_list = random.sample(range(self.data_size), self.data_size)
         pickle.dump(shuffle_index_list, open(config.index_list_file, 'wb'), True)
         return shuffle_index_list
+    def generate_batch_index(self, batch_size):
+        if self.train_index + batch_size > self.data_size:
+            batch_index = self.shuffle_list[self.train_index:self.data_size]
+            self.shuffle_list = self.shuffle_index()
+            remain_size = batch_size - (self.data_size - self.train_index)
+            batch_index += self.shuffle_list[:remain_size]
+            self.train_index = remain_size
+        else:
+            batch_index = self.shuffle_list[self.train_index:self.train_index+batch_size]
+            self.train_index += batch_size
+
+        return batch_index
