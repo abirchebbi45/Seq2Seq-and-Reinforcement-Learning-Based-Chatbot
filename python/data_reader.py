@@ -14,3 +14,7 @@ class Data_Reader:
         self.train_index = cur_train_index
     def get_batch_num(self, batch_size):
         return self.data_size // batch_size
+    def shuffle_index(self):
+        shuffle_index_list = random.sample(range(self.data_size), self.data_size)
+        pickle.dump(shuffle_index_list, open(config.index_list_file, 'wb'), True)
+        return shuffle_index_list
